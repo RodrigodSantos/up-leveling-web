@@ -1,5 +1,9 @@
-import { TrendingUp } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { LogOut, TrendingUp } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
+import { Button } from '@/components/ui/button'
+import { fetchMe } from '@/features/auth/api'
+import { useAuth } from '@/lib/auth/auth-context'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -11,10 +15,14 @@ const links = [
 
 /** Moldura das telas logadas: cabeçalho com o menu em cima, e a tela da rota atual no <Outlet />. */
 export function AppLayout() {
+  const { signOut } = useAuth()
+  // useQuery: busca (e guarda em cache) os dados de quem está logado; "me" é a chave do cache
+  const me = useQuery({ queryKey: ['me'], queryFn: fetchMe })
+
   return (
     <div className="min-h-svh">
       <header className="border-b">
-        <div className="mx-auto flex max-w-4xl items-center gap-4 px-4 py-3">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-4 px-4 py-3">
           <span className="flex items-center gap-2 font-medium">
             <TrendingUp className="size-5 text-blue-600" aria-hidden />
             Up Leveling
@@ -37,6 +45,13 @@ export function AppLayout() {
             ))}
           </nav>
           {/* F2: nível e barra de XP */}
+          <div className="ml-auto flex items-center gap-2">
+            {me.data && <span className="text-muted-foreground text-sm">Olá, {me.data.name}</span>}
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              <LogOut aria-hidden />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-4 py-6">

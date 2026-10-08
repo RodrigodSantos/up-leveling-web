@@ -1,31 +1,45 @@
-import { render, screen } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
-import { describe, expect, it } from 'vitest'
-import { routes } from './router'
+import { screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { loginAs, mockApi, renderApp } from '@/test/render-app'
 
-// createMemoryRouter: um roteador sem barra de endereço, para o teste escolher a URL inicial
-function renderAt(path: string) {
-  render(<RouterProvider router={createMemoryRouter(routes, { initialEntries: [path] })} />)
-}
+const me = { id: 1, name: 'Rodrigo', email: 'rodrigo@mail.com', createdAt: '2026-10-08T10:00:00' }
+
+beforeEach(() => {
+  localStorage.clear()
+  mockApi({ method: 'GET', path: '/api/me', status: 200, body: me })
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('rotas', () => {
-  it('abre a tela Hoje com o menu, e o item Hoje marcado', () => {
-    renderAt('/')
+  it('logado, abre a tela Hoje com o menu e o item Hoje marcado', async () => {
+    loginAs()
+    renderApp('/')
 
     expect(screen.getByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Hoje' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'Hábitos' })).not.toHaveAttribute('aria-current')
+    expect(await screen.findByText('Olá, Rodrigo')).toBeInTheDocument()
   })
 
-  it('login fica fora do layout (sem menu)', () => {
-    renderAt('/login')
+  it('sem login, qualquer tela do app manda para o login', () => {
+    renderApp('/historico')
 
     expect(screen.getByRole('heading', { name: 'Entrar' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Hoje' })).not.toBeInTheDocument()
   })
 
+  it('logado, abrir /login leva direto para o app', () => {
+    loginAs()
+    renderApp('/login')
+
+    expect(screen.getByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
+  })
+
   it('mostra a página de não encontrada para rotas desconhecidas', () => {
-    renderAt('/nao-existe')
+    renderApp('/nao-existe')
 
     expect(screen.getByRole('heading', { name: 'Página não encontrada' })).toBeInTheDocument()
   })

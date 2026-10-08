@@ -1,8 +1,11 @@
-import { getSession } from '@/lib/auth/token-storage'
+import { clearSession, getSession } from '@/lib/auth/token-storage'
 import { ApiError, toApiError } from './api-error'
 
 /** Endereço da API: vem do arquivo .env (VITE_API_URL); localmente, o backend roda na 8080. */
 export const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
+
+/** Evento disparado no navegador quando a API recusa o token (401): o AuthProvider escuta e manda para o login. */
+export const SESSION_EXPIRED_EVENT = 'up-leveling:session-expired'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
@@ -42,6 +45,11 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
   }
 
   if (!response.ok) {
+    // 401 com token = o token venceu ou ficou inválido: encerra a sessão e avisa o app (AuthProvider)
+    if (response.status === 401 && session) {
+      clearSession()
+      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT))
+    }
     throw await toApiError(response)
   }
   // 204 No Content (ex.: excluir um hábito) não tem corpo para ler

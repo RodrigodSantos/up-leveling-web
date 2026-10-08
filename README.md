@@ -4,7 +4,7 @@
 
 Frontend do **Up Leveling**: hábitos gamificados. Cumpra seus hábitos, ganhe XP, mantenha sequências e suba de nível.
 
-> 🚧 **Em construção.** A API já está publicada: [up-leveling](https://github.com/RodrigodSantos/up-leveling) · [Swagger](https://up-leveling-api.onrender.com).
+> 🚧 **Em construção.** No ar: https://up-leveling-web.vercel.app (entre com a **conta demo**). API: [up-leveling](https://github.com/RodrigodSantos/up-leveling) · [Swagger](https://up-leveling-api.onrender.com).
 
 ## 🛠️ Stack
 
@@ -46,19 +46,21 @@ VITE_API_URL=https://up-leveling-api.onrender.com
 ```
 src
 ├── app/            # rotas e cache de dados (TanStack Query)
+├── features/
+│   └── auth/       # login, cadastro, validação (Zod) e erros da API nos campos
 ├── components/
 │   ├── layout/     # cabeçalho, menu e moldura das telas
 │   └── ui/         # componentes do shadcn/ui (botão, modal...)
 ├── lib/
 │   ├── api/        # cliente HTTP: token, JSON e erros da API (RFC 9457)
-│   └── auth/       # sessão (token e expiração) no navegador
+│   └── auth/       # sessão, AuthProvider (useAuth) e porteiros das rotas
 └── test/           # configuração dos testes
 ```
 
 ## 🗺️ Roadmap
 
 - [x] Fundação: Vite, Tailwind, shadcn/ui, rotas, cliente da API, testes, CI
-- [ ] Login, cadastro e conta demo
+- [x] Login, cadastro e conta demo (rotas protegidas, sessão com expiração)
 - [ ] Tela "Hoje": check-ins, meta diária, streak, nível
 - [ ] Hábitos: criar, editar, pausar e excluir
 - [ ] Histórico com gráfico de XP e perfil
