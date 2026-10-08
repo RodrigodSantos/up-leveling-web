@@ -1,0 +1,2 @@
+# Final de linha LF em todo sistema (o Prettier e o CI esperam LF; o Windows usaria CRLF)
+* text=auto eol=lf
