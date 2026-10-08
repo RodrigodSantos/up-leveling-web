@@ -47,7 +47,8 @@ VITE_API_URL=https://up-leveling-api.onrender.com
 src
 ├── app/            # rotas e cache de dados (TanStack Query)
 ├── features/
-│   └── auth/       # login, cadastro, validação (Zod) e erros da API nos campos
+│   ├── auth/       # login, cadastro, validação (Zod) e erros da API nos campos
+│   └── today/      # missões do dia: check-in, desfazer, streak e subiu de nível
 ├── components/
 │   ├── layout/     # cabeçalho, menu e moldura das telas
 │   └── ui/         # componentes do shadcn/ui (botão, modal...)
@@ -61,7 +62,7 @@ src
 
 - [x] Fundação: Vite, Tailwind, shadcn/ui, rotas, cliente da API, testes, CI
 - [x] Login, cadastro e conta demo (rotas protegidas, sessão com expiração)
-- [ ] Tela "Hoje": check-ins, meta diária, streak, nível
+- [x] Tela "Missões diárias": check-ins, meta diária, streak, barra de nível e janela de subiu de nível
 - [ ] Hábitos: criar, editar, pausar e excluir
 - [ ] Histórico com gráfico de XP e perfil
 - [ ] Responsivo, tema escuro e acabamento

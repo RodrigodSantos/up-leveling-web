@@ -18,7 +18,7 @@ describe('rotas', () => {
     loginAs()
     renderApp('/')
 
-    expect(screen.getByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Hoje' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('link', { name: 'Hábitos' })).not.toHaveAttribute('aria-current')
     expect(await screen.findByText('Olá, Rodrigo')).toBeInTheDocument()
@@ -35,7 +35,7 @@ describe('rotas', () => {
     loginAs()
     renderApp('/login')
 
-    expect(screen.getByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
   })
 
   it('mostra a página de não encontrada para rotas desconhecidas', () => {

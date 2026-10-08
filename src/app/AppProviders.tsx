@@ -15,7 +15,8 @@ export function AppProviders({ queryClient, children }: { queryClient: QueryClie
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           {children}
-          <Toaster position="top-center" richColors />
+          {/* Embaixo, para não cobrir a barra de XP do cabeçalho, que é justamente o que os avisos anunciam */}
+          <Toaster position="bottom-center" richColors />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

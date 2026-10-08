@@ -28,6 +28,7 @@ interface FakeRoute {
   method: string
   path: string
   status: number
+  /** Valor fixo, ou uma função chamada a cada requisição (para a resposta mudar entre chamadas) */
   body?: unknown
 }
 
@@ -47,7 +48,8 @@ export function mockApi(...fakeRoutes: FakeRoute[]) {
       })
     }
     const isError = route.status >= 400
-    return new Response(route.body === undefined ? null : JSON.stringify(route.body), {
+    const body = typeof route.body === 'function' ? (route.body as () => unknown)() : route.body
+    return new Response(body === undefined ? null : JSON.stringify(body), {
       status: route.status,
       headers: { 'Content-Type': isError ? 'application/problem+json' : 'application/json' },
     })

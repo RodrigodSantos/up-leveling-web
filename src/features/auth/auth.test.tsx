@@ -71,7 +71,7 @@ describe('login', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Entrar com a conta demo' }))
 
-    expect(await screen.findByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
     expect(sentBody(api)).toEqual({ email: 'demo@upleveling.local', password: 'demo1234' })
   })
 })
@@ -90,7 +90,7 @@ describe('cadastro', () => {
     await userEvent.type(screen.getByLabelText('Senha'), 'senha-forte-123')
     await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
 
-    expect(await screen.findByRole('heading', { name: 'Seus hábitos de hoje' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
     expect(sentBody(api, 0)).toEqual({ name: 'Rodrigo', email: 'rodrigo@mail.com', password: 'senha-forte-123' })
   })
 

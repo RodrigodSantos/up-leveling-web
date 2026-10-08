@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { fetchMe } from '@/features/auth/api'
 import { useAuth } from '@/lib/auth/auth-context'
 import { cn } from '@/lib/utils'
+import { LevelBar } from './LevelBar'
 
 const links = [
   { to: '/', label: 'Hoje' },
@@ -44,7 +45,7 @@ export function AppLayout() {
               </NavLink>
             ))}
           </nav>
-          {/* F2: nível e barra de XP */}
+          <LevelBar />
           <div className="ml-auto flex items-center gap-2">
             {me.data && <span className="text-muted-foreground text-sm">Olá, {me.data.name}</span>}
             <Button variant="ghost" size="sm" onClick={signOut}>
