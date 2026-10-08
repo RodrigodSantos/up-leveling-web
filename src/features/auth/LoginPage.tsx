@@ -31,11 +31,11 @@ export function LoginPage() {
   return (
     <AuthLayout
       title="Entrar"
-      description="Continue de onde parou."
+      description="Bem-vindo de volta, Jogador. Identifique-se para continuar."
       footer={
         <span>
           Não tem conta?{' '}
-          <Link to="/cadastro" className="text-foreground underline underline-offset-4">
+          <Link to="/cadastro" className="text-brand underline underline-offset-4">
             Criar conta
           </Link>
         </span>

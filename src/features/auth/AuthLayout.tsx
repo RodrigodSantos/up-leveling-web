@@ -9,18 +9,19 @@ interface AuthLayoutProps {
   footer: ReactNode
 }
 
-/** Moldura das telas de entrada: logo e um card centralizado. */
+/** Moldura das telas de entrada: logo e um card no estilo "janela do Sistema". */
 export function AuthLayout({ title, description, children, footer }: AuthLayoutProps) {
   return (
-    <main className="bg-muted/40 flex min-h-svh flex-col items-center justify-center gap-6 px-4 py-10">
+    <main className="flex min-h-svh flex-col items-center justify-center gap-6 px-4 py-10">
       <div className="flex items-center gap-2 text-lg font-medium">
-        <TrendingUp className="size-6 text-blue-600" aria-hidden />
+        <TrendingUp className="text-brand size-6" aria-hidden />
         Up Leveling
       </div>
-      <Card className="w-full max-w-sm">
+      <Card className="system-panel w-full max-w-sm">
         <CardHeader>
+          <span className="system-tag w-fit">[ SISTEMA ]</span>
           <CardTitle>
-            <h1 className="text-xl">{title}</h1>
+            <h1 className="mt-2 text-xl">{title}</h1>
           </CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>

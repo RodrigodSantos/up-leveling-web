@@ -37,7 +37,7 @@ export const routes = [
     element: (
       <section className="mx-auto max-w-md space-y-2 px-4 py-16 text-center">
         <h1 className="text-2xl font-medium">Página não encontrada</h1>
-        <Link to="/" className="text-blue-600 underline">
+        <Link to="/" className="text-brand underline">
           Voltar para o início
         </Link>
       </section>

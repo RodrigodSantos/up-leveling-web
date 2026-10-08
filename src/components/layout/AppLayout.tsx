@@ -24,7 +24,7 @@ export function AppLayout() {
       <header className="border-b">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-4 px-4 py-3">
           <span className="flex items-center gap-2 font-medium">
-            <TrendingUp className="size-5 text-blue-600" aria-hidden />
+            <TrendingUp className="text-brand size-5" aria-hidden />
             Up Leveling
           </span>
           <nav className="flex gap-1">
@@ -36,7 +36,7 @@ export function AppLayout() {
                 className={({ isActive }) =>
                   cn(
                     'text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm',
-                    isActive && 'bg-muted text-foreground font-medium',
+                    isActive && 'bg-brand/15 text-brand font-medium',
                   )
                 }
               >

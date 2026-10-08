@@ -3,11 +3,20 @@
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/geist';
 
+/* O modo escuro vale para a página inteira quando o <html> tem a classe "dark" */
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Ponte entre as variáveis abaixo e as classes do Tailwind:
+ * --color-brand vira "bg-brand", "text-brand", "border-brand"...
+ */
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Geist Variable', sans-serif;
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-streak: var(--streak);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,73 +57,142 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * TEMAS: duas escolhas independentes, as duas no <html>.
+ *   modo:     classe "dark" (sem ela = claro)
+ *   destaque: atributo data-accent="blue | red | yellow | purple | green" (sem ele = azul)
+ *
+ * --brand é a cor de destaque: barra de XP, nível, bordas, botão principal, foco.
+ * Cada cor tem um tom para o claro (mais escuro, para contrastar com o branco) e outro para o escuro (mais vivo).
+ * --success (cumprido) e --streak (sequência) têm significado próprio e NÃO mudam com o destaque.
+ */
+
+/* ---------- Modo claro (base) ---------- */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --brand: #1565d8;
+  --brand-foreground: #ffffff;
+  --success: #0f8a5f;
+  --streak: #d97706;
+
+  --background: #f4f7fc;
+  --foreground: #0b1530;
+  --card: #ffffff;
+  --card-foreground: #0b1530;
+  --popover: #ffffff;
+  --popover-foreground: #0b1530;
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --secondary: #e8eef8;
+  --secondary-foreground: #0b1530;
+  --muted: #e8eef8;
+  --muted-foreground: #5b6b8a;
+  --accent: #e8eef8;
+  --accent-foreground: #0b1530;
+  --destructive: #d42a3c;
+  --border: #d6e0f0;
+  --input: #d6e0f0;
+  --ring: var(--brand);
+  --chart-1: var(--brand);
+  --chart-2: #5b6b8a;
+  --chart-3: #8fa1c2;
+  --chart-4: #b9c6dc;
+  --chart-5: #d6e0f0;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0b1530;
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: var(--brand-foreground);
+  --sidebar-accent: #e8eef8;
+  --sidebar-accent-foreground: #0b1530;
+  --sidebar-border: #d6e0f0;
+  --sidebar-ring: var(--brand);
 }
 
+/* ---------- Modo escuro: a "janela do Sistema" ---------- */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --brand: #3b9eff;
+  --brand-foreground: #05101f;
+  --success: #22c58b;
+  --streak: #f59e0b;
+
+  --background: #070b16;
+  --foreground: #dce8ff;
+  --card: #0d1424;
+  --card-foreground: #dce8ff;
+  --popover: #0d1424;
+  --popover-foreground: #dce8ff;
+  --secondary: #131d33;
+  --secondary-foreground: #dce8ff;
+  --muted: #131d33;
+  --muted-foreground: #7d8fb3;
+  --accent: #16213a;
+  --accent-foreground: #dce8ff;
+  --destructive: #ff5c6c;
+  --border: #1d2a44;
+  --input: #23314d;
+  --chart-2: #7d8fb3;
+  --chart-3: #4c5d80;
+  --chart-4: #2c3a58;
+  --chart-5: #1d2a44;
+  --sidebar: #0d1424;
+  --sidebar-foreground: #dce8ff;
+  --sidebar-accent: #16213a;
+  --sidebar-accent-foreground: #dce8ff;
+  --sidebar-border: #1d2a44;
+}
+
+/* ---------- Cores de destaque (claro / escuro) ---------- */
+/* No tema vermelho, o erro vira magenta para não se confundir com o destaque */
+[data-accent='red'] {
+  --brand: #d42a3c;
+  --brand-foreground: #ffffff;
+  --destructive: #b4236b;
+}
+.dark[data-accent='red'] {
+  --brand: #ff5c6c;
+  --brand-foreground: #1f0508;
+  --destructive: #ff6fa8;
+}
+[data-accent='yellow'] {
+  --brand: #9a6700;
+  --brand-foreground: #ffffff;
+}
+.dark[data-accent='yellow'] {
+  --brand: #ffc53d;
+  --brand-foreground: #1f1600;
+}
+[data-accent='purple'] {
+  --brand: #6d3fe0;
+  --brand-foreground: #ffffff;
+}
+.dark[data-accent='purple'] {
+  --brand: #a78bfa;
+  --brand-foreground: #120a2b;
+}
+[data-accent='green'] {
+  --brand: #0f8a5f;
+  --brand-foreground: #ffffff;
+}
+.dark[data-accent='green'] {
+  --brand: #34d399;
+  --brand-foreground: #03211a;
+}
+
+/* Painel no estilo "janela do Sistema": borda na cor de destaque com um brilho suave */
+@utility system-panel {
+  border: 1px solid var(--brand);
+  box-shadow: 0 0 22px -6px color-mix(in oklab, var(--brand) 55%, transparent);
+}
+
+/* Etiqueta "[ SISTEMA ]" */
+@utility system-tag {
+  display: inline-block;
+  border: 1px solid var(--brand);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: var(--brand);
+  font-size: 11px;
+  letter-spacing: 0.12em;
 }
 
 @layer base {

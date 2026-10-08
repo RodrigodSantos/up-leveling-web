@@ -37,11 +37,11 @@ export function RegisterPage() {
   return (
     <AuthLayout
       title="Criar conta"
-      description="Cadastre seus hábitos e comece a ganhar XP."
+      description="Um novo Jogador desperta. Cadastre seus hábitos e comece a ganhar XP."
       footer={
         <span>
           Já tem conta?{' '}
-          <Link to="/login" className="text-foreground underline underline-offset-4">
+          <Link to="/login" className="text-brand underline underline-offset-4">
             Entrar
           </Link>
         </span>
