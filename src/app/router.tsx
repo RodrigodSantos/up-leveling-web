@@ -1,9 +1,9 @@
 import { createBrowserRouter, Link } from 'react-router'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { ComingSoon } from '@/components/layout/ComingSoon'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RegisterPage } from '@/features/auth/RegisterPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
+import { ProfilePage } from '@/features/profile/ProfilePage'
 import { TodayPage } from '@/features/today/TodayPage'
 import { RedirectIfAuthenticated, RequireAuth } from '@/lib/auth/route-guards'
 
@@ -34,7 +34,7 @@ export const routes = [
             // O Vite separa o arquivo dela, que só é baixado quando a pessoa abre o Histórico.
             lazy: () => import('@/features/history/HistoryPage').then((module) => ({ Component: module.HistoryPage })),
           },
-          { path: '/perfil', element: <ComingSoon title="Perfil" stage="F4" /> },
+          { path: '/perfil', element: <ProfilePage /> },
         ],
       },
     ],

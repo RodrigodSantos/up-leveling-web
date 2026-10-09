@@ -14,3 +14,8 @@ export function formatLongDate(isoDate: string): string {
 export function formatShortDate(isoDate: string): string {
   return format(isoDate, { day: 'numeric', month: 'numeric' })
 }
+
+/** "2026-10-08" (ou "2026-10-08T10:00:00") → "8 de outubro de 2026" */
+export function formatFullDate(isoDate: string): string {
+  return format(isoDate.slice(0, 10), { day: 'numeric', month: 'long', year: 'numeric' })
+}

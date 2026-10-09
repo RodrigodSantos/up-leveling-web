@@ -142,13 +142,28 @@
 }
 
 /* ---------- Cores de destaque (claro / escuro) ---------- */
+/*
+ * Valem no <html> (o tema do app) e também em qualquer elemento com data-accent dentro da página:
+ * é assim que as amostras de cor do Perfil mostram cada cor no tom do modo atual.
+ * O azul precisa de regra própria só para as amostras (no <html>, sem atributo, ele já é o padrão).
+ */
+[data-accent='blue'] {
+  --brand: #1565d8;
+  --brand-foreground: #ffffff;
+}
+.dark[data-accent='blue'],
+.dark [data-accent='blue'] {
+  --brand: #3b9eff;
+  --brand-foreground: #05101f;
+}
 /* No tema vermelho, o erro vira magenta para não se confundir com o destaque */
 [data-accent='red'] {
   --brand: #d42a3c;
   --brand-foreground: #ffffff;
   --destructive: #b4236b;
 }
-.dark[data-accent='red'] {
+.dark[data-accent='red'],
+.dark [data-accent='red'] {
   --brand: #ff5c6c;
   --brand-foreground: #1f0508;
   --destructive: #ff6fa8;
@@ -157,7 +172,8 @@
   --brand: #9a6700;
   --brand-foreground: #ffffff;
 }
-.dark[data-accent='yellow'] {
+.dark[data-accent='yellow'],
+.dark [data-accent='yellow'] {
   --brand: #ffc53d;
   --brand-foreground: #1f1600;
 }
@@ -165,7 +181,8 @@
   --brand: #6d3fe0;
   --brand-foreground: #ffffff;
 }
-.dark[data-accent='purple'] {
+.dark[data-accent='purple'],
+.dark [data-accent='purple'] {
   --brand: #a78bfa;
   --brand-foreground: #120a2b;
 }
@@ -173,7 +190,8 @@
   --brand: #0f8a5f;
   --brand-foreground: #ffffff;
 }
-.dark[data-accent='green'] {
+.dark[data-accent='green'],
+.dark [data-accent='green'] {
   --brand: #34d399;
   --brand-foreground: #03211a;
 }
