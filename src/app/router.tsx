@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { ComingSoon } from '@/components/layout/ComingSoon'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RegisterPage } from '@/features/auth/RegisterPage'
+import { HabitsPage } from '@/features/habits/HabitsPage'
 import { TodayPage } from '@/features/today/TodayPage'
 import { RedirectIfAuthenticated, RequireAuth } from '@/lib/auth/route-guards'
 
@@ -26,7 +27,7 @@ export const routes = [
         element: <AppLayout />,
         children: [
           { path: '/', element: <TodayPage /> },
-          { path: '/habitos', element: <ComingSoon title="Hábitos" stage="F3" /> },
+          { path: '/habitos', element: <HabitsPage /> },
           { path: '/historico', element: <ComingSoon title="Histórico" stage="F4" /> },
           { path: '/perfil', element: <ComingSoon title="Perfil" stage="F4" /> },
         ],

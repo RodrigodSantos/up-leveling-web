@@ -63,3 +63,29 @@ export interface CheckInResponse {
   leveledUp: boolean
   progress: ProgressResponse
 }
+
+/** Dia da semana como a API manda (java.time.DayOfWeek) */
+export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+
+/** DELETED não aparece aqui: a API nunca devolve hábitos excluídos */
+export type HabitStatus = 'ACTIVE' | 'PAUSED'
+
+/** GET, POST e PUT /api/habits */
+export interface HabitResponse {
+  id: number
+  name: string
+  xpReward: number
+  dailyTarget: number
+  status: HabitStatus
+  /** Em ordem (segunda → domingo); vazio = todos os dias */
+  days: DayOfWeek[]
+  createdAt: string
+}
+
+/** Body do POST e do PUT /api/habits (o PUT substitui o hábito inteiro) */
+export interface HabitRequest {
+  name: string
+  xpReward: number
+  dailyTarget: number
+  days: DayOfWeek[]
+}
