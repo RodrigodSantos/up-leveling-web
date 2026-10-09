@@ -74,6 +74,32 @@ describe('login', () => {
     expect(await screen.findByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
     expect(sentBody(api)).toEqual({ email: 'demo@upleveling.local', password: 'demo1234' })
   })
+
+  it('com animações ligadas, mostra "Acesso concedido" antes de entrar', async () => {
+    // Desliga o "reduzir movimento" que o setup dos testes deixa ligado
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ ...original(query), matches: false })) as typeof window.matchMedia
+    try {
+      mockApi(
+        { method: 'POST', path: '/api/auth/login', status: 200, body: token },
+        { method: 'GET', path: '/api/me', status: 200, body: me },
+      )
+      renderApp('/login')
+
+      await userEvent.click(screen.getByRole('button', { name: 'Entrar com a conta demo' }))
+
+      // Primeiro a mensagem do Sistema, ainda na tela de login (o token só é guardado depois dela)
+      expect(await screen.findByRole('status')).toHaveTextContent('Acesso concedido')
+      expect(getSession()).toBeNull()
+      expect(screen.getByRole('button', { name: 'Entrar com a conta demo' })).toBeDisabled()
+
+      // Passados os 700 ms, entra no app
+      expect(await screen.findByRole('heading', { name: 'Missões diárias' }, { timeout: 3000 })).toBeInTheDocument()
+      expect(getSession()?.token).toBe('jwt-novo')
+    } finally {
+      window.matchMedia = original
+    }
+  })
 })
 
 describe('cadastro', () => {

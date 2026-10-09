@@ -4,16 +4,16 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/lib/auth/auth-context'
 import { login, registerUser } from './api'
 import { AuthLayout } from './AuthLayout'
 import { showApiError } from '@/components/form/form-errors'
 import { FormField } from '@/components/form/FormField'
 import { registerSchema, type RegisterForm } from './schemas'
 import { SlowServerHint } from './SlowServerHint'
+import { useAccessGranted } from './system/use-access-granted'
 
 export function RegisterPage() {
-  const { signIn } = useAuth()
+  const { granted, grant } = useAccessGranted()
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: '', email: '', password: '' },
@@ -27,7 +27,7 @@ export function RegisterPage() {
       return login({ email: data.email, password: data.password })
     },
     onSuccess: (token) => {
-      signIn(token)
+      grant(token)
       toast.success('Conta criada. Bora subir de nível.')
     },
     // 409 = e-mail já cadastrado: a mensagem vai para o campo de e-mail
@@ -37,6 +37,7 @@ export function RegisterPage() {
   return (
     <AuthLayout
       title="Criar conta"
+      granted={granted}
       description="Um novo Jogador desperta. Cadastre seus hábitos e comece a ganhar XP."
       footer={
         <span>
@@ -79,7 +80,7 @@ export function RegisterPage() {
             {errors.root.message}
           </p>
         )}
-        <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
+        <Button type="submit" className="w-full" disabled={registerMutation.isPending || granted}>
           {registerMutation.isPending ? 'Criando conta...' : 'Criar conta'}
         </Button>
         <SlowServerHint loading={registerMutation.isPending} />

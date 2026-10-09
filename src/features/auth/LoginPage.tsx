@@ -4,16 +4,16 @@ import { Sparkles } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/lib/auth/auth-context'
 import { DEMO_ACCOUNT, login } from './api'
 import { AuthLayout } from './AuthLayout'
 import { showApiError } from '@/components/form/form-errors'
 import { FormField } from '@/components/form/FormField'
 import { loginSchema, type LoginForm } from './schemas'
 import { SlowServerHint } from './SlowServerHint'
+import { useAccessGranted } from './system/use-access-granted'
 
 export function LoginPage() {
-  const { signIn } = useAuth()
+  const { granted, grant } = useAccessGranted()
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
@@ -23,14 +23,16 @@ export function LoginPage() {
   // useMutation: uma ação que muda algo no servidor (aqui, "abrir uma sessão")
   const loginMutation = useMutation({
     mutationFn: login,
-    // Ao guardar o token, o RedirectIfAuthenticated leva para o app (ou para a tela de onde a pessoa veio)
-    onSuccess: signIn,
+    // Mostra "Acesso concedido" e só depois guarda o token; aí o RedirectIfAuthenticated leva para o app
+    // (ou para a tela de onde a pessoa veio)
+    onSuccess: grant,
     onError: (error) => showApiError(error, form.setError),
   })
 
   return (
     <AuthLayout
       title="Entrar"
+      granted={granted}
       description="Bem-vindo de volta, Jogador. Identifique-se para continuar."
       footer={
         <span>
@@ -64,14 +66,14 @@ export function LoginPage() {
             {errors.root.message}
           </p>
         )}
-        <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+        <Button type="submit" className="w-full" disabled={loginMutation.isPending || granted}>
           {loginMutation.isPending ? 'Entrando...' : 'Entrar'}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="w-full"
-          disabled={loginMutation.isPending}
+          disabled={loginMutation.isPending || granted}
           onClick={() => loginMutation.mutate(DEMO_ACCOUNT)}
         >
           <Sparkles aria-hidden />

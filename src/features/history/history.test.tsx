@@ -70,7 +70,7 @@ function urlsFor(api: ReturnType<typeof mockApi>, path: string): URL[] {
 // para o primeiro teste não gastar o tempo de espera do findBy carregando o Recharts.
 beforeAll(async () => {
   await import('./HistoryPage')
-})
+}, 30_000) // o Recharts é grande: numa máquina ocupada, importar pode passar dos 10 s padrão
 
 beforeEach(() => {
   localStorage.clear()

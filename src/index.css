@@ -213,6 +213,121 @@
   letter-spacing: 0.12em;
 }
 
+/* ---------- Animações da "janela do Sistema" (tela de entrada) ---------- */
+
+/* Abrir janela: primeiro uma linha de luz horizontal, depois ela se expande na vertical */
+@keyframes system-window-open {
+  0% {
+    opacity: 0;
+    transform: scaleX(0) scaleY(0.02);
+  }
+  40% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(0.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fechar: o caminho inverso (vira linha e some) */
+@keyframes system-window-close {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(0.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(0) scaleY(0.02);
+  }
+}
+
+@keyframes system-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Partícula de luz subindo e sumindo */
+@keyframes system-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-70vh);
+  }
+}
+
+/* Linha de varredura passando pelo card */
+@keyframes system-scan {
+  0%,
+  70% {
+    top: -10%;
+  }
+  100% {
+    top: 110%;
+  }
+}
+
+@keyframes system-fill {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes system-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@utility system-window-open {
+  transform-origin: center;
+  animation: system-window-open 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@utility system-window-close {
+  transform-origin: center;
+  animation: system-window-close 450ms ease-in both;
+}
+
+@utility system-float {
+  animation: system-float 6s ease-in-out infinite;
+}
+
+/* Cantos em colchete ⌜ ⌟ na cor de destaque */
+@utility system-corners {
+  background:
+    linear-gradient(var(--brand), var(--brand)) top left / 14px 2px no-repeat,
+    linear-gradient(var(--brand), var(--brand)) top left / 2px 14px no-repeat,
+    linear-gradient(var(--brand), var(--brand)) bottom right / 14px 2px no-repeat,
+    linear-gradient(var(--brand), var(--brand)) bottom right / 2px 14px no-repeat;
+}
+
+/* Quem pediu "reduzir movimento" no sistema vê tudo parado, já no estado final */
+@media (prefers-reduced-motion: reduce) {
+  .system-window-open,
+  .system-window-close,
+  .system-float,
+  [data-motion] {
+    animation: none !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

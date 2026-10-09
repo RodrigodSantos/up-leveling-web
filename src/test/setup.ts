@@ -3,11 +3,13 @@ import '@testing-library/jest-dom/vitest' // matchers como toBeInTheDocument()
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
 
-// O jsdom (navegador simulado) não tem matchMedia; o componente de avisos (sonner) usa para detectar o tema escuro
+// O jsdom (navegador simulado) não tem matchMedia; o componente de avisos (sonner) usa para detectar o tema escuro.
+// "Reduzir movimento" fica ligado nos testes: a tela de entrada pula as animações e a transição "Acesso concedido"
+// (o teste dela liga o movimento de novo só para ele).
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn((query: string) => ({
-    matches: false,
+    matches: query === '(prefers-reduced-motion: reduce)',
     media: query,
     onchange: null,
     addEventListener: vi.fn(),
