@@ -45,12 +45,16 @@ export function HabitFormDialog({ open, onOpenChange, habit }: HabitFormDialogPr
 
   // A janela fica montada o tempo todo; a cada abertura, o reset() troca os valores
   // (e limpa os erros) para os do hábito escolhido, ou deixa em branco para um novo.
+  // resetForm e resetSave são funções estáveis (não mudam entre renderizações): na prática, o efeito
+  // roda só ao abrir a janela ou trocar de hábito.
+  const resetForm = form.reset
+  const resetSave = save.reset
   useEffect(() => {
     if (open) {
-      form.reset(toFormValues(habit))
-      save.reset()
+      resetForm(toFormValues(habit))
+      resetSave()
     }
-  }, [open, habit]) // form e save ficam de fora de propósito: o efeito é só "ao abrir ou trocar de hábito"
+  }, [open, habit, resetForm, resetSave])
 
   function onSubmit(data: HabitForm) {
     save.mutate(

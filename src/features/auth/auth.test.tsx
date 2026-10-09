@@ -21,13 +21,13 @@ describe('login', () => {
       { method: 'POST', path: '/api/auth/login', status: 200, body: token },
       { method: 'GET', path: '/api/me', status: 200, body: me },
     )
-    renderApp('/historico') // sem login: cai no /login lembrando do /historico
+    renderApp('/habitos') // sem login: cai no /login lembrando do /habitos
 
     await userEvent.type(screen.getByLabelText('E-mail'), 'rodrigo@mail.com')
     await userEvent.type(screen.getByLabelText('Senha'), 'senha-forte-123')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
 
-    expect(await screen.findByRole('heading', { name: 'Histórico' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Hábitos' })).toBeInTheDocument()
     expect(sentBody(api)).toEqual({ email: 'rodrigo@mail.com', password: 'senha-forte-123' })
     expect(getSession()?.token).toBe('jwt-novo')
   })

@@ -5,21 +5,11 @@ import { Link, useSearchParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { TodayHabit } from '@/lib/api/types'
+import { formatLongDate } from '@/lib/dates'
 import { fetchToday, queryKeys, type Day } from './api'
 import { HabitCard } from './HabitCard'
 import { LevelUpDialog } from './LevelUpDialog'
 import { useCheckIn } from './use-check-in'
-
-/** "2026-10-08" → "Quinta-feira, 8 de outubro" (lido em UTC para o dia não "voltar" por causa do fuso) */
-function formatDate(isoDate: string): string {
-  const text = new Intl.DateTimeFormat('pt-BR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'UTC',
-  }).format(new Date(`${isoDate}T00:00:00Z`))
-  return text.charAt(0).toUpperCase() + text.slice(1)
-}
 
 /** Tela principal: as missões (hábitos) do dia, com check-in, andamento e streak. */
 export function TodayPage() {
@@ -40,7 +30,7 @@ export function TodayPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-muted-foreground text-sm">
-            {today.data ? formatDate(today.data.date) : ' '}
+            {today.data ? formatLongDate(today.data.date) : ' '}
             {day === 'ontem' && ' (ontem)'}
           </p>
           <h1 className="text-2xl font-medium">Missões diárias</h1>

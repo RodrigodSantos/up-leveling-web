@@ -25,7 +25,7 @@ describe('rotas', () => {
   })
 
   it('sem login, qualquer tela do app manda para o login', () => {
-    renderApp('/historico')
+    renderApp('/habitos')
 
     expect(screen.getByRole('heading', { name: 'Entrar' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Hoje' })).not.toBeInTheDocument()

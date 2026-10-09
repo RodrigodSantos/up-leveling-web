@@ -28,7 +28,12 @@ export const routes = [
         children: [
           { path: '/', element: <TodayPage /> },
           { path: '/habitos', element: <HabitsPage /> },
-          { path: '/historico', element: <ComingSoon title="Histórico" stage="F4" /> },
+          {
+            path: '/historico',
+            // Carregada sob demanda: o gráfico (Recharts) é pesado e só esta tela usa.
+            // O Vite separa o arquivo dela, que só é baixado quando a pessoa abre o Histórico.
+            lazy: () => import('@/features/history/HistoryPage').then((module) => ({ Component: module.HistoryPage })),
+          },
           { path: '/perfil', element: <ComingSoon title="Perfil" stage="F4" /> },
         ],
       },

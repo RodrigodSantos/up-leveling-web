@@ -89,3 +89,40 @@ export interface HabitRequest {
   dailyTarget: number
   days: DayOfWeek[]
 }
+
+/** Resposta paginada do Spring (Page serializado como DTO: o conteúdo + os dados da página) */
+export interface PageResponse<T> {
+  content: T[]
+  page: {
+    size: number
+    /** Começa em 0 */
+    number: number
+    totalElements: number
+    totalPages: number
+  }
+}
+
+/** Os check-ins de um hábito num dia, somados (ex.: 6 copos de água = count 6, xp 30). xp não inclui o bônus. */
+export interface HabitCheckIns {
+  habitId: number
+  /** Vem mesmo que o hábito tenha sido excluído: o histórico não se apaga */
+  habitName: string
+  count: number
+  xp: number
+  bonusXp: number
+}
+
+/** Um item de GET /api/check-ins/daily: um dia inteiro (a página nunca corta um dia ao meio) */
+export interface DailyCheckIns {
+  date: string
+  /** XP total do dia, bônus incluído */
+  xp: number
+  /** Do hábito com o check-in mais recente para o mais antigo */
+  habits: HabitCheckIns[]
+}
+
+/** Um ponto de GET /api/me/xp-history: XP ganho no dia (0 se não fez nada) */
+export interface DailyXp {
+  date: string
+  xp: number
+}
