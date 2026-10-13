@@ -2,7 +2,7 @@ import { Check } from 'lucide-react'
 import { createContext, use, useEffect, useState, type ReactNode } from 'react'
 import { useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
-import { prefersReducedMotion } from './motion'
+import { prefersReducedMotion } from '@/components/system/motion'
 
 /** A partir desta largura há espaço para as janelas em volta do card (o "lg" do Tailwind) */
 const WIDE_SCREEN = '(min-width: 1024px)'

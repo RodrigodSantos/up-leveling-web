@@ -213,7 +213,7 @@
   letter-spacing: 0.12em;
 }
 
-/* ---------- Animações da "janela do Sistema" (tela de entrada) ---------- */
+/* ---------- Animações da "janela do Sistema" (tela de entrada e janela de nível) ---------- */
 
 /* Abrir janela: primeiro uma linha de luz horizontal, depois ela se expande na vertical */
 @keyframes system-window-open {
@@ -286,6 +286,24 @@
 @keyframes system-fill {
   from {
     width: 0;
+  }
+}
+
+/* Quadro do nível acendendo: aparece um pouco maior, com um brilho forte, e assenta */
+@keyframes system-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+    box-shadow: 0 0 32px 2px color-mix(in oklab, var(--brand) 70%, transparent);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 14px -4px color-mix(in oklab, var(--brand) 55%, transparent);
   }
 }
 

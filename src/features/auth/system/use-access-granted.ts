@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { TokenResponse } from '@/lib/api/types'
 import { useAuth } from '@/lib/auth/auth-context'
-import { prefersReducedMotion } from './motion'
+import { prefersReducedMotion } from '@/components/system/motion'
 
 /** Quanto tempo a mensagem "Acesso concedido" fica na tela antes de entrar no app */
 export const ACCESS_GRANTED_MS = 700

@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitForElementToBeRemoved, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CheckInResponse, ProgressResponse, TodayHabit, TodayResponse } from '@/lib/api/types'
@@ -156,6 +156,36 @@ describe('Missões diárias', () => {
     expect(within(dialog).getByText('Você subiu para o nível 3!')).toBeInTheDocument()
     await userEvent.click(within(dialog).getByRole('button', { name: 'Continuar' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('com animações ligadas, a janela de nível fecha como janela antes de sair da tela', async () => {
+    // Desliga o "reduzir movimento" que o setup dos testes deixa ligado
+    const original = window.matchMedia
+    window.matchMedia = ((query: string) => ({ ...original(query), matches: false })) as typeof window.matchMedia
+    try {
+      mockApi(
+        { method: 'GET', path: '/api/me', status: 200, body: me },
+        { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
+        { method: 'GET', path: '/api/today', status: 200, body: today([ler]) },
+        { method: 'POST', path: '/api/habits/1/check-ins', status: 201, body: checkInResponse({ leveledUp: true }) },
+      )
+      renderApp('/')
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
+      const dialog = await screen.findByRole('dialog')
+      // O leitor de tela recebe a frase inteira como descrição da janela, mesmo enquanto ela é digitada
+      expect(dialog).toHaveAccessibleDescription('Continue cumprindo suas missões para ficar ainda mais forte.')
+
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Continuar' }))
+
+      // Primeiro toca o fechamento, com a janela ainda na tela...
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(dialog.querySelector('.system-window-close')).not.toBeNull()
+      // ...e passados os 450 ms ela sai
+      await waitForElementToBeRemoved(() => screen.queryByRole('dialog'))
+    } finally {
+      window.matchMedia = original
+    }
   })
 
   it('desfazer devolve o XP', async () => {

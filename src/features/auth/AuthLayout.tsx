@@ -1,10 +1,10 @@
 import { TrendingUp } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { Typewriter } from '@/components/system/Typewriter'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { SystemBackground } from './system/SystemBackground'
 import { SystemWindows } from './system/SystemWindows'
-import { Typewriter } from './system/Typewriter'
 
 interface AuthLayoutProps {
   title: string
