@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { LogOut, TrendingUp } from 'lucide-react'
+import { ChartColumn, ListChecks, LogOut, Swords, TrendingUp, UserRound } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { fetchMe } from '@/features/auth/api'
@@ -8,13 +8,17 @@ import { cn } from '@/lib/utils'
 import { LevelBar } from './LevelBar'
 
 const links = [
-  { to: '/', label: 'Hoje' },
-  { to: '/habitos', label: 'Hábitos' },
-  { to: '/historico', label: 'Histórico' },
-  { to: '/perfil', label: 'Perfil' },
+  { to: '/', label: 'Hoje', icon: Swords },
+  { to: '/habitos', label: 'Hábitos', icon: ListChecks },
+  { to: '/historico', label: 'Histórico', icon: ChartColumn },
+  { to: '/perfil', label: 'Perfil', icon: UserRound },
 ]
 
-/** Moldura das telas logadas: cabeçalho com o menu em cima, e a tela da rota atual no <Outlet />. */
+/**
+ * Moldura das telas logadas: cabeçalho, menu e a tela da rota atual no <Outlet />.
+ * No celular (abaixo de 640px, o "sm" do Tailwind) o menu vira uma barra fixa no rodapé, ao alcance do polegar,
+ * e o cabeçalho fica com uma linha só. É o mesmo <nav>, só muda o CSS: os links não aparecem duas vezes.
+ */
 export function AppLayout() {
   const { signOut } = useAuth()
   // useQuery: busca (e guarda em cache) os dados de quem está logado; "me" é a chave do cache
@@ -23,12 +27,18 @@ export function AppLayout() {
   return (
     <div className="min-h-svh">
       <header className="border-b">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-4 px-4 py-3">
-          <span className="flex items-center gap-2 font-medium">
+        <div className="mx-auto flex max-w-4xl items-center gap-3 px-4 py-3 sm:flex-wrap sm:gap-4">
+          <span className="flex shrink-0 items-center gap-2 font-medium">
             <TrendingUp className="text-brand size-5" aria-hidden />
             Up Leveling
           </span>
-          <nav className="flex gap-1">
+          <nav
+            aria-label="Menu principal"
+            className={cn(
+              'bg-background fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t pb-[env(safe-area-inset-bottom)]',
+              'sm:static sm:z-auto sm:flex sm:gap-1 sm:border-0 sm:bg-transparent sm:pb-0',
+            )}
+          >
             {links.map((link) => (
               <NavLink
                 key={link.to}
@@ -36,26 +46,30 @@ export function AppLayout() {
                 end={link.to === '/'}
                 className={({ isActive }) =>
                   cn(
-                    'text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm',
-                    isActive && 'bg-brand/15 text-brand font-medium',
+                    'text-muted-foreground hover:text-foreground flex flex-col items-center gap-1 py-2 text-xs',
+                    'sm:rounded-md sm:px-3 sm:py-1.5 sm:text-sm',
+                    isActive && 'text-brand sm:bg-brand/15 font-medium',
                   )
                 }
               >
+                <link.icon className="size-5 sm:hidden" aria-hidden />
                 {link.label}
               </NavLink>
             ))}
           </nav>
           <LevelBar />
-          <div className="ml-auto flex items-center gap-2">
-            {me.data && <span className="text-muted-foreground text-sm">Olá, {me.data.name}</span>}
+          <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
+            {me.data && <span className="text-muted-foreground hidden text-sm sm:inline">Olá, {me.data.name}</span>}
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut aria-hidden />
-              Sair
+              {/* No celular fica só o ícone; o texto continua para o leitor de tela */}
+              <span className="max-sm:sr-only">Sair</span>
             </Button>
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-4xl px-4 py-6">
+      {/* Espaço embaixo para a barra do menu não cobrir o fim da tela no celular */}
+      <main className="mx-auto max-w-4xl px-4 pt-6 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:pb-6">
         <Outlet />
       </main>
     </div>

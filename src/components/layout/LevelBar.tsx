@@ -8,7 +8,8 @@ export function LevelBar() {
   if (!progress) return null
 
   return (
-    <div className="flex min-w-48 items-center gap-3">
+    // No celular ocupa o espaço que sobra na linha do cabeçalho; do "sm" para cima, largura mínima fixa
+    <div className="flex min-w-0 flex-1 items-center gap-3 sm:min-w-48 sm:flex-none">
       <div className="border-brand flex size-10 shrink-0 flex-col items-center justify-center rounded-md border leading-none">
         <span className="text-muted-foreground text-[9px]">NÍVEL</span>
         <span className="text-brand text-lg font-medium">{progress.level}</span>

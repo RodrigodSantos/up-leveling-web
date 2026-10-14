@@ -15,8 +15,13 @@ export function AppProviders({ queryClient, children }: { queryClient: QueryClie
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           {children}
-          {/* Embaixo, para não cobrir a barra de XP do cabeçalho, que é justamente o que os avisos anunciam */}
-          <Toaster position="bottom-center" richColors />
+          {/* Embaixo, para não cobrir a barra de XP do cabeçalho, que é justamente o que os avisos anunciam.
+              No celular, sobem acima da barra do menu (mobileOffset vale abaixo de 600px) */}
+          <Toaster
+            position="bottom-center"
+            richColors
+            mobileOffset={{ bottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+          />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
