@@ -21,7 +21,7 @@ describe('login', () => {
       { method: 'POST', path: '/api/auth/login', status: 200, body: token },
       { method: 'GET', path: '/api/me', status: 200, body: me },
     )
-    renderApp('/habitos') // sem login: cai no /login lembrando do /habitos
+    await renderApp('/habitos') // sem login: cai no /login lembrando do /habitos
 
     await userEvent.type(screen.getByLabelText('E-mail'), 'rodrigo@mail.com')
     await userEvent.type(screen.getByLabelText('Senha'), 'senha-forte-123')
@@ -34,7 +34,7 @@ describe('login', () => {
 
   it('valida no navegador, sem chamar a API', async () => {
     const api = mockApi()
-    renderApp('/login')
+    await renderApp('/login')
 
     await userEvent.type(screen.getByLabelText('E-mail'), 'nao-e-email')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
@@ -52,7 +52,7 @@ describe('login', () => {
       status: 401,
       body: { title: 'Credenciais inválidas', detail: 'E-mail ou senha inválidos' },
     })
-    renderApp('/login')
+    await renderApp('/login')
 
     await userEvent.type(screen.getByLabelText('E-mail'), 'rodrigo@mail.com')
     await userEvent.type(screen.getByLabelText('Senha'), 'errada')
@@ -67,7 +67,7 @@ describe('login', () => {
       { method: 'POST', path: '/api/auth/login', status: 200, body: token },
       { method: 'GET', path: '/api/me', status: 200, body: { ...me, name: 'Demo' } },
     )
-    renderApp('/login')
+    await renderApp('/login')
 
     await userEvent.click(screen.getByRole('button', { name: 'Entrar com a conta demo' }))
 
@@ -84,7 +84,7 @@ describe('login', () => {
         { method: 'POST', path: '/api/auth/login', status: 200, body: token },
         { method: 'GET', path: '/api/me', status: 200, body: me },
       )
-      renderApp('/login')
+      await renderApp('/login')
 
       await userEvent.click(screen.getByRole('button', { name: 'Entrar com a conta demo' }))
 
@@ -109,7 +109,7 @@ describe('cadastro', () => {
       { method: 'POST', path: '/api/auth/login', status: 200, body: token },
       { method: 'GET', path: '/api/me', status: 200, body: me },
     )
-    renderApp('/cadastro')
+    await renderApp('/cadastro')
 
     await userEvent.type(screen.getByLabelText('Nome'), 'Rodrigo')
     await userEvent.type(screen.getByLabelText('E-mail'), 'rodrigo@mail.com')
@@ -127,7 +127,7 @@ describe('cadastro', () => {
       status: 409,
       body: { title: 'Conflito', detail: "Já existe uma conta com o e-mail 'rodrigo@mail.com'" },
     })
-    renderApp('/cadastro')
+    await renderApp('/cadastro')
 
     await userEvent.type(screen.getByLabelText('Nome'), 'Rodrigo')
     await userEvent.type(screen.getByLabelText('E-mail'), 'rodrigo@mail.com')
@@ -139,7 +139,7 @@ describe('cadastro', () => {
   })
 
   it('senha curta é barrada no navegador', async () => {
-    renderApp('/cadastro')
+    await renderApp('/cadastro')
 
     await userEvent.type(screen.getByLabelText('Senha'), '1234567')
     await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
@@ -152,7 +152,7 @@ describe('sessão', () => {
   it('sair apaga o token e volta para o login', async () => {
     mockApi({ method: 'GET', path: '/api/me', status: 200, body: me })
     loginAs()
-    renderApp('/')
+    await renderApp('/')
 
     await userEvent.click(screen.getByRole('button', { name: 'Sair' }))
 
@@ -168,7 +168,7 @@ describe('sessão', () => {
       body: { title: 'Não autenticado', detail: 'Token ausente, inválido ou expirado' },
     })
     loginAs('token-revogado')
-    renderApp('/')
+    await renderApp('/')
 
     expect(await screen.findByRole('heading', { name: 'Entrar' })).toBeInTheDocument()
     expect(await screen.findByText('Sua sessão expirou. Entre de novo.')).toBeInTheDocument()

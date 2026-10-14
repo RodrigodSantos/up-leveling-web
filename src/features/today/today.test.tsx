@@ -77,7 +77,7 @@ describe('Missões diárias', () => {
       { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
       { method: 'GET', path: '/api/today', status: 200, body: today([ler, agua]) },
     )
-    renderApp('/')
+    await renderApp('/')
 
     expect(await screen.findByText('Quinta-feira, 8 de outubro')).toBeInTheDocument()
     expect(screen.getByText('0 de 2')).toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('Missões diárias', () => {
         },
       },
     )
-    renderApp('/')
+    await renderApp('/')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
 
@@ -133,7 +133,7 @@ describe('Missões diárias', () => {
         body: checkInResponse({ progress: { ...progress, totalXp: 290, progressPercent: 95 } }),
       },
     )
-    renderApp('/')
+    await renderApp('/')
     expect(await screen.findByText('270 / 300 XP')).toBeInTheDocument()
 
     await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
@@ -148,7 +148,7 @@ describe('Missões diárias', () => {
       { method: 'GET', path: '/api/today', status: 200, body: today([ler]) },
       { method: 'POST', path: '/api/habits/1/check-ins', status: 201, body: checkInResponse({ leveledUp: true }) },
     )
-    renderApp('/')
+    await renderApp('/')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
 
@@ -169,7 +169,7 @@ describe('Missões diárias', () => {
         { method: 'GET', path: '/api/today', status: 200, body: today([ler]) },
         { method: 'POST', path: '/api/habits/1/check-ins', status: 201, body: checkInResponse({ leveledUp: true }) },
       )
-      renderApp('/')
+      await renderApp('/')
 
       await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
       const dialog = await screen.findByRole('dialog')
@@ -200,7 +200,7 @@ describe('Missões diárias', () => {
         body: checkInResponse({ habitId: 2, xpChange: -5, dayCount: 2, dailyTarget: 8, dayCompleted: false }),
       },
     )
-    renderApp('/')
+    await renderApp('/')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Desfazer check-in: Beber água' }))
 
@@ -219,7 +219,7 @@ describe('Missões diárias', () => {
         body: { title: 'Regra de negócio violada', detail: 'Meta do dia já atingida (1/1)' },
       },
     )
-    renderApp('/')
+    await renderApp('/')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Fazer check-in: Ler 20 páginas' }))
 
@@ -232,7 +232,7 @@ describe('Missões diárias', () => {
       { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
       { method: 'GET', path: '/api/today', status: 200, body: today([]) },
     )
-    renderApp('/')
+    await renderApp('/')
 
     expect(await screen.findByText('Nenhuma missão para este dia')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Ir para Hábitos' })).toHaveAttribute('href', '/habitos')
@@ -244,7 +244,7 @@ describe('Missões diárias', () => {
       { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
       { method: 'GET', path: '/api/today', status: 200, body: today([ler]) },
     )
-    const { router } = renderApp('/')
+    const { router } = await renderApp('/')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Ver ontem' }))
 

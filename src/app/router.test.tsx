@@ -16,7 +16,7 @@ afterEach(() => {
 describe('rotas', () => {
   it('logado, abre a tela Hoje com o menu e o item Hoje marcado', async () => {
     loginAs()
-    renderApp('/')
+    await renderApp('/')
 
     expect(screen.getByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Hoje' })).toHaveAttribute('aria-current', 'page')
@@ -24,22 +24,22 @@ describe('rotas', () => {
     expect(await screen.findByText('Olá, Rodrigo')).toBeInTheDocument()
   })
 
-  it('sem login, qualquer tela do app manda para o login', () => {
-    renderApp('/habitos')
+  it('sem login, qualquer tela do app manda para o login', async () => {
+    await renderApp('/habitos')
 
     expect(screen.getByRole('heading', { name: 'Entrar' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: 'Hoje' })).not.toBeInTheDocument()
   })
 
-  it('logado, abrir /login leva direto para o app', () => {
+  it('logado, abrir /login leva direto para o app', async () => {
     loginAs()
-    renderApp('/login')
+    await renderApp('/login')
 
     expect(screen.getByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
   })
 
-  it('mostra a página de não encontrada para rotas desconhecidas', () => {
-    renderApp('/nao-existe')
+  it('mostra a página de não encontrada para rotas desconhecidas', async () => {
+    await renderApp('/nao-existe')
 
     expect(screen.getByRole('heading', { name: 'Página não encontrada' })).toBeInTheDocument()
   })

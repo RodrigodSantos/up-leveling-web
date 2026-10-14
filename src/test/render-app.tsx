@@ -1,13 +1,17 @@
 import { QueryClient } from '@tanstack/react-query'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { vi } from 'vitest'
+import { expect, vi } from 'vitest'
 import { AppProviders } from '@/app/AppProviders'
 import { routes } from '@/app/router'
 import { saveSession } from '@/lib/auth/token-storage'
 
-/** Monta o app inteiro (providers + rotas) já numa URL, como se a pessoa tivesse aberto aquele endereço. */
-export function renderApp(path: string) {
+/**
+ * Monta o app inteiro (providers + rotas) já numa URL, como se a pessoa tivesse aberto aquele endereço.
+ * As telas são carregadas sob demanda (lazy): a função só termina quando o arquivo da tela chegou e ela está
+ * desenhada, inclusive depois de um redirecionamento (ex.: sem login, "/" vai para "/login").
+ */
+export async function renderApp(path: string) {
   // Cache novo por teste e sem repetir requisições que falham (os testes ficam rápidos e independentes)
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })
   const router = createMemoryRouter(routes, { initialEntries: [path] })
@@ -15,6 +19,18 @@ export function renderApp(path: string) {
     <AppProviders queryClient={queryClient}>
       <RouterProvider router={router} />
     </AppProviders>,
+  )
+  // Pronto = navegação parada, nenhum "lazy" pendente na tela atual e a tela já desenhada (toda tela tem um <h1>).
+  // Só o estado do router não basta: ele fica pronto um pouco antes de o React desenhar a tela.
+  // Limite de 10 s (o padrão é 1 s): no primeiro teste de cada arquivo, o import da tela ainda passa pela
+  // transformação do Vitest e pode levar mais de 1 s.
+  await waitFor(
+    () => {
+      const { initialized, navigation, matches } = router.state
+      const routeReady = initialized && navigation.state === 'idle' && matches.every((match) => !match.route.lazy)
+      expect(routeReady && document.querySelector('h1') !== null).toBe(true)
+    },
+    { timeout: 10_000 },
   )
   return { router }
 }

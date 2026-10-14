@@ -94,7 +94,7 @@ describe('summarize', () => {
 describe('Histórico', () => {
   it('mostra o resumo dos últimos 30 dias e pede o período certo à API', async () => {
     const api = mockApi(...routes())
-    renderApp('/historico')
+    await renderApp('/historico')
 
     expect(await screen.findByText('+120')).toBeInTheDocument() // XP no período
     expect(screen.getByText('4 XP')).toBeInTheDocument() // média
@@ -108,7 +108,7 @@ describe('Histórico', () => {
 
   it('trocar o período vai para a URL e busca de novo', async () => {
     const api = mockApi(...routes())
-    const { router } = renderApp('/historico')
+    const { router } = await renderApp('/historico')
 
     await userEvent.click(await screen.findByRole('radio', { name: '7 dias' }))
 
@@ -120,7 +120,7 @@ describe('Histórico', () => {
 
   it('lista cada dia com o total e o mesmo hábito numa linha só, com a quantidade', async () => {
     mockApi(...routes())
-    renderApp('/historico')
+    await renderApp('/historico')
 
     const quinta = await screen.findByRole('region', { name: 'Quinta-feira, 8 de outubro' })
     expect(within(quinta).getByText('+50 XP no dia')).toBeInTheDocument()
@@ -137,7 +137,7 @@ describe('Histórico', () => {
 
   it('paginação: "Próxima" põe ?pagina=2 na URL e pede a página 1 (base 0) à API', async () => {
     const api = mockApi(...routes(page(checkIns, 0, 3)))
-    const { router } = renderApp('/historico')
+    const { router } = await renderApp('/historico')
 
     const pagination = await screen.findByRole('navigation', { name: 'Paginação' })
     expect(within(pagination).getByText('Página 1 de 3')).toBeInTheDocument()
@@ -154,7 +154,7 @@ describe('Histórico', () => {
 
   it('filtrar por hábito manda o habitId e volta para a página 1', async () => {
     const api = mockApi(...routes(page(checkIns, 1, 3)))
-    const { router } = renderApp('/historico?pagina=2&periodo=7')
+    const { router } = await renderApp('/historico?pagina=2&periodo=7')
 
     await userEvent.click(await screen.findByRole('combobox', { name: 'Filtrar por hábito' }))
     await userEvent.click(await screen.findByRole('option', { name: 'Beber água' }))
@@ -169,7 +169,7 @@ describe('Histórico', () => {
 
   it('valores inválidos na URL viram o padrão', async () => {
     const api = mockApi(...routes())
-    renderApp('/historico?periodo=15&pagina=abc&habito=x')
+    await renderApp('/historico?periodo=15&pagina=abc&habito=x')
 
     expect(await screen.findByRole('radio', { name: '30 dias' })).toHaveAttribute('aria-checked', 'true')
     await vi.waitFor(() => expect(urlsFor(api, '/api/check-ins/daily')).toHaveLength(1))
@@ -180,14 +180,14 @@ describe('Histórico', () => {
 
   it('sem check-ins, explica de onde eles vêm', async () => {
     mockApi(...routes(page([], 0, 0)))
-    renderApp('/historico')
+    await renderApp('/historico')
 
     expect(await screen.findByText('Nenhum check-in ainda')).toBeInTheDocument()
   })
 
   it('página que não existe oferece voltar para a primeira', async () => {
     mockApi(...routes(page([], 9, 3)))
-    const { router } = renderApp('/historico?pagina=10')
+    const { router } = await renderApp('/historico?pagina=10')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Ir para a primeira página' }))
 

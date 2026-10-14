@@ -71,7 +71,7 @@ afterEach(() => {
 describe('Hábitos', () => {
   it('lista os hábitos com XP, meta, dias e a etiqueta de pausado', async () => {
     mockApi(...baseRoutes([academia, agua, ler]))
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     const list = await screen.findByRole('list', { name: 'Hábitos' })
     const rows = within(list).getAllByRole('listitem')
@@ -107,7 +107,7 @@ describe('Hábitos', () => {
         return novo
       },
     })
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Criar hábito' }))
     const dialog = await screen.findByRole('dialog')
@@ -135,7 +135,7 @@ describe('Hábitos', () => {
 
   it('valida no navegador antes de enviar', async () => {
     const api = mockApi(...baseRoutes([ler]))
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Criar hábito' }))
     const dialog = await screen.findByRole('dialog')
@@ -157,7 +157,7 @@ describe('Hábitos', () => {
       status: 409,
       body: { title: 'Conflito', detail: "Você já tem um hábito chamado 'Ler 20 páginas'" },
     })
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await userEvent.click(await screen.findByRole('button', { name: 'Criar hábito' }))
     const dialog = await screen.findByRole('dialog')
@@ -175,7 +175,7 @@ describe('Hábitos', () => {
       status: 200,
       body: { ...agua, xpReward: 10 },
     })
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await openActions('Beber água')
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Editar' }))
@@ -208,7 +208,7 @@ describe('Hábitos', () => {
       status: 200,
       body: { ...ler, status: 'PAUSED' },
     })
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await openActions('Ler 20 páginas')
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Pausar' }))
@@ -222,7 +222,7 @@ describe('Hábitos', () => {
 
   it('pausado mostra "Reativar" no menu', async () => {
     mockApi(...baseRoutes([academia]))
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await openActions('Academia')
 
@@ -232,7 +232,7 @@ describe('Hábitos', () => {
 
   it('excluir pede confirmação: cancelar não exclui, confirmar exclui', async () => {
     const api = mockApi(...baseRoutes([ler]), { method: 'DELETE', path: '/api/habits/1', status: 204 })
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     await openActions('Ler 20 páginas')
     await userEvent.click(await screen.findByRole('menuitem', { name: 'Excluir' }))
@@ -254,7 +254,7 @@ describe('Hábitos', () => {
 
   it('o filtro vai para a URL e para a chamada da API', async () => {
     const api = mockApi(...baseRoutes([]))
-    const { router } = renderApp('/habitos')
+    const { router } = await renderApp('/habitos')
 
     await userEvent.click(await screen.findByRole('radio', { name: 'Pausados' }))
 
@@ -265,7 +265,7 @@ describe('Hábitos', () => {
 
   it('sem hábitos, convida a criar o primeiro', async () => {
     mockApi(...baseRoutes([]))
-    renderApp('/habitos')
+    await renderApp('/habitos')
 
     expect(await screen.findByText('Você ainda não tem hábitos')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Criar hábito' })).toHaveLength(2)

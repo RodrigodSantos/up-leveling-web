@@ -43,7 +43,7 @@ afterEach(() => {
 describe('Perfil', () => {
   it('mostra o nível, o XP que falta e desde quando a pessoa joga', async () => {
     mockApi(...routes())
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     expect(await screen.findByText('Faltam 30 XP para o nível 3')).toBeInTheDocument()
     expect(screen.getByText('270 XP no total')).toBeInTheDocument()
@@ -53,7 +53,7 @@ describe('Perfil', () => {
   it('salva nome e e-mail e o cabeçalho muda na hora', async () => {
     const updated = { ...me, name: 'Rodrigo dos Santos' }
     const api = mockApi(...routes(), { method: 'PUT', path: '/api/me', status: 200, body: updated })
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     const dados = await screen.findByRole('region', { name: 'Dados da conta' })
     const name = await within(dados).findByLabelText('Nome') // o formulário aparece quando o /api/me responde
@@ -78,7 +78,7 @@ describe('Perfil', () => {
       status: 409,
       body: { title: 'Conflito', detail: "Já existe uma conta com o e-mail 'ana@mail.com'" },
     })
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     const dados = await screen.findByRole('region', { name: 'Dados da conta' })
     const email = await within(dados).findByLabelText('E-mail')
@@ -92,7 +92,7 @@ describe('Perfil', () => {
 
   it('senha nova e confirmação diferentes são barradas no navegador', async () => {
     const api = mockApi(...routes())
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     await screen.findByText('Faltam 30 XP para o nível 3')
     const senha = panel('Trocar senha')
@@ -107,7 +107,7 @@ describe('Perfil', () => {
 
   it('troca a senha sem mandar a confirmação e limpa os campos', async () => {
     const api = mockApi(...routes(), { method: 'PUT', path: '/api/me/password', status: 204 })
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     await screen.findByText('Faltam 30 XP para o nível 3')
     const senha = panel('Trocar senha')
@@ -131,7 +131,7 @@ describe('Perfil', () => {
       status: 422,
       body: { title: 'Regra de negócio violada', detail: 'A senha atual está incorreta' },
     })
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     await screen.findByText('Faltam 30 XP para o nível 3')
     const senha = panel('Trocar senha')
@@ -147,7 +147,7 @@ describe('Perfil', () => {
 
   it('na conta demo, avisa e trava dados e senha', async () => {
     mockApi(...routes(demo))
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     expect(await screen.findByText(/Esta é a conta de demonstração/)).toBeInTheDocument()
     const dados = panel('Dados da conta')
@@ -159,7 +159,7 @@ describe('Perfil', () => {
 
   it('trocar a cor de destaque e o modo vale na hora e fica salvo no navegador', async () => {
     mockApi(...routes())
-    renderApp('/perfil')
+    await renderApp('/perfil')
 
     const aparencia = await screen.findByRole('region', { name: 'Aparência' })
     expect(within(aparencia).getByRole('radio', { name: 'Azul' })).toHaveAttribute('aria-checked', 'true')
