@@ -7,6 +7,11 @@ export interface TokenResponse {
   expiresAt: string
 }
 
+/** GET e PUT /api/me/accent-colors: cores de destaque salvas pelo usuário (matizes de 0 a 359°, até 5) */
+export interface AccentColorsResponse {
+  hues: number[]
+}
+
 /** POST /api/auth/register e GET /api/me */
 export interface UserResponse {
   id: number

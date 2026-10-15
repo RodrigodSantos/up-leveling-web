@@ -15,10 +15,11 @@ const progress: ProgressResponse = {
   progressPercent: 85,
 }
 
-function routes(user: UserResponse = me) {
+function routes(user: UserResponse = me, savedHues: number[] = []) {
   return [
     { method: 'GET', path: '/api/me', status: 200, body: user },
     { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
+    { method: 'GET', path: '/api/me/accent-colors', status: 200, body: { hues: savedHues } },
   ]
 }
 
@@ -60,6 +61,7 @@ describe('Perfil', () => {
         status: 500,
         body: { title: 'Erro interno', detail: 'Falha no servidor' },
       },
+      { method: 'GET', path: '/api/me/accent-colors', status: 200, body: { hues: [] } },
     )
     await renderApp('/perfil')
 
@@ -167,6 +169,53 @@ describe('Perfil', () => {
     expect(screen.getByRole('heading', { name: 'Perfil' })).toBeInTheDocument()
   })
 
+  it('salva a cor escolhida no arco-íris na conta, e depois remove', async () => {
+    const api = mockApi(
+      { method: 'GET', path: '/api/me/accent-colors', status: 200, body: { hues: [] } },
+      { method: 'PUT', path: '/api/me/accent-colors', status: 200, body: { hues: [200] } },
+      ...routes(),
+    )
+    await renderApp('/perfil')
+    const aparencia = await screen.findByRole('region', { name: 'Aparência' })
+    expect(await within(aparencia).findByText(/Nenhuma ainda/)).toBeInTheDocument()
+
+    fireEvent.change(within(aparencia).getByRole('slider', { name: 'Ou escolha qualquer cor' }), {
+      target: { value: '200' },
+    })
+    await userEvent.click(within(aparencia).getByRole('button', { name: 'Salvar esta cor' }))
+
+    expect(sentBody(api, callIndex(api, 'PUT'))).toEqual({ hues: [200] })
+    const savedColor = await within(aparencia).findByRole('radio', { name: 'Cor salva: matiz 200°' })
+    expect(savedColor).toHaveAttribute('aria-checked', 'true') // é a cor escolhida agora
+    expect(within(aparencia).getByText('1 de 5')).toBeInTheDocument()
+    expect(await screen.findByText('Cor salva: 200°')).toBeInTheDocument()
+
+    // Com a cor salva escolhida, o botão vira "Remover"; a lista sem ela vai para a API
+    mockApi({ method: 'PUT', path: '/api/me/accent-colors', status: 200, body: { hues: [] } }, ...routes())
+    await userEvent.click(within(aparencia).getByRole('button', { name: 'Remover esta cor' }))
+    expect(await within(aparencia).findByText(/Nenhuma ainda/)).toBeInTheDocument()
+  })
+
+  it('não salva uma cor padrão nem passa de 5, e explica o porquê', async () => {
+    mockApi(...routes(me, [10, 60, 120, 180, 330]))
+    await renderApp('/perfil')
+    const aparencia = await screen.findByRole('region', { name: 'Aparência' })
+
+    // Azul (padrão) é a cor de agora
+    expect(await within(aparencia).findByText('Esta já é uma das cores padrão.')).toBeInTheDocument()
+    expect(within(aparencia).getByRole('button', { name: 'Salvar esta cor' })).toBeDisabled()
+
+    fireEvent.change(within(aparencia).getByRole('slider', { name: 'Ou escolha qualquer cor' }), {
+      target: { value: '200' },
+    })
+    expect(within(aparencia).getByText('Limite de 5: remova uma para salvar outra.')).toBeInTheDocument()
+    expect(within(aparencia).getByRole('button', { name: 'Salvar esta cor' })).toBeDisabled()
+
+    // Clicar numa cor salva aplica a cor no app
+    await userEvent.click(within(aparencia).getByRole('radio', { name: 'Cor salva: matiz 330°' }))
+    expect(localStorage.getItem('up-leveling.accent')).toBe('330')
+  })
+
   it('na conta demo, avisa e trava dados e senha', async () => {
     mockApi(...routes(demo))
     await renderApp('/perfil')
@@ -177,6 +226,16 @@ describe('Perfil', () => {
     expect(within(dados).getByLabelText('E-mail')).toBeDisabled()
     expect(within(panel('Trocar senha')).getByLabelText('Senha atual')).toBeDisabled()
     expect(within(panel('Trocar senha')).getByRole('button', { name: 'Alterar senha' })).toBeDisabled()
+  })
+
+  it('na conta demo, mostra as cores salvas, mas sem salvar nem remover', async () => {
+    mockApi(...routes(demo, [200, 330]))
+    await renderApp('/perfil')
+    const aparencia = await screen.findByRole('region', { name: 'Aparência' })
+
+    expect(await within(aparencia).findByRole('radio', { name: 'Cor salva: matiz 200°' })).toBeInTheDocument()
+    expect(within(aparencia).getByText(/cores salvas não podem ser alteradas/)).toBeInTheDocument()
+    expect(within(aparencia).queryByRole('button', { name: 'Salvar esta cor' })).not.toBeInTheDocument()
   })
 
   it('atalho de cor, qualquer matiz no controle e o modo valem na hora e ficam salvos no navegador', async () => {

@@ -67,8 +67,11 @@ export function ProfilePage() {
         </Panel>
       </div>
 
-      <Panel title="Aparência" description="Salva neste navegador.">
-        <AppearanceSettings />
+      <Panel
+        title="Aparência"
+        description="O modo e a cor de agora ficam neste navegador; as cores salvas, na sua conta."
+      >
+        <AppearanceSettings locked={demo} />
       </Panel>
     </section>
   )
