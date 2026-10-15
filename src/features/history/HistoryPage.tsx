@@ -58,6 +58,7 @@ export function HistoryPage() {
 
   return (
     <section className="space-y-6">
+      <title>Histórico · Up Leveling</title>
       <header>
         <p className="text-muted-foreground text-sm">Cada check-in fica registrado aqui</p>
         <h1 className="text-2xl font-medium">Histórico</h1>

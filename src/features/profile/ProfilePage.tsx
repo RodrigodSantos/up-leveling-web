@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Info } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { fetchMe } from '@/features/auth/api'
@@ -21,6 +22,7 @@ export function ProfilePage() {
 
   return (
     <section className="space-y-6">
+      <title>Perfil · Up Leveling</title>
       <header>
         <p className="text-muted-foreground text-sm">Status do Jogador</p>
         <h1 className="text-2xl font-medium">Perfil</h1>
@@ -32,10 +34,20 @@ export function ProfilePage() {
         </p>
       )}
 
+      {progress.isError && (
+        <div role="alert" className="border-destructive/50 space-y-3 rounded-lg border p-4">
+          <p>Não foi possível carregar seu nível. {progress.error.message}</p>
+          <Button variant="outline" size="sm" onClick={() => progress.refetch()}>
+            Tentar de novo
+          </Button>
+        </div>
+      )}
+
+      {/* Esqueleto só enquanto carrega: se uma das consultas falhar, fica a mensagem de erro no lugar */}
       {me.data && progress.data ? (
         <LevelSummary user={me.data} progress={progress.data} />
       ) : (
-        <Skeleton className="h-28" aria-label="Carregando nível" />
+        !me.isError && !progress.isError && <Skeleton className="h-28" aria-label="Carregando nível" />
       )}
 
       {demo && (

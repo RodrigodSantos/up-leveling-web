@@ -40,7 +40,13 @@ export function HabitRow({ habit, busy, onEdit, onToggleStatus, onDelete }: Habi
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-sm" disabled={busy} aria-label={`Ações: ${habit.name}`}>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="max-sm:size-11"
+            disabled={busy}
+            aria-label={`Ações: ${habit.name}`}
+          >
             <EllipsisVertical aria-hidden />
           </Button>
         </DropdownMenuTrigger>

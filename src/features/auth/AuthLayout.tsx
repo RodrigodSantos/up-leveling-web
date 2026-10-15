@@ -22,6 +22,8 @@ interface AuthLayoutProps {
 export function AuthLayout({ title, description, children, footer, granted = false }: AuthLayoutProps) {
   return (
     <main className="relative isolate flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden px-4 py-10">
+      {/* Template string: o <title> precisa de um texto só ("{title} · Up Leveling" viraria dois pedaços) */}
+      <title>{`${title} · Up Leveling`}</title>
       <SystemBackground />
       <SystemWindows />
 

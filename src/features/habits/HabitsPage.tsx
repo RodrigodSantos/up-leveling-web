@@ -74,6 +74,7 @@ export function HabitsPage() {
 
   return (
     <section className="space-y-6">
+      <title>Hábitos · Up Leveling</title>
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-muted-foreground text-sm">Defina as missões que se repetem</p>

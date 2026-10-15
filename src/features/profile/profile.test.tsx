@@ -50,6 +50,27 @@ describe('Perfil', () => {
     expect(screen.getByText('Jogador desde 8 de outubro de 2026')).toBeInTheDocument()
   })
 
+  it('erro ao carregar o nível mostra a mensagem e o "Tentar de novo" busca outra vez', async () => {
+    mockApi(
+      { method: 'GET', path: '/api/me', status: 200, body: me },
+      {
+        method: 'GET',
+        path: '/api/me/progress',
+        status: 500,
+        body: { title: 'Erro interno', detail: 'Falha no servidor' },
+      },
+    )
+    await renderApp('/perfil')
+
+    expect(await screen.findByText('Não foi possível carregar seu nível. Falha no servidor')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Carregando nível')).not.toBeInTheDocument()
+
+    // A API volta a responder: o botão busca de novo e o quadro de nível aparece
+    mockApi(...routes())
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }))
+    expect(await screen.findByText('Faltam 30 XP para o nível 3')).toBeInTheDocument()
+  })
+
   it('salva nome e e-mail e o cabeçalho muda na hora', async () => {
     const updated = { ...me, name: 'Rodrigo dos Santos' }
     const api = mockApi(...routes(), { method: 'PUT', path: '/api/me', status: 200, body: updated })

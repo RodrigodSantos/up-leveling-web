@@ -1,5 +1,6 @@
 import { createBrowserRouter, Link } from 'react-router'
 import { AppLayout } from '@/components/layout/AppLayout'
+import { RouteError } from '@/components/layout/RouteError'
 import { RedirectIfAuthenticated, RequireAuth } from '@/lib/auth/route-guards'
 
 /**
@@ -15,6 +16,12 @@ export const routes = [
   {
     // Aparece enquanto o arquivo da primeira tela ainda está chegando (só na abertura do app)
     HydrateFallback: () => null,
+    // Erro em qualquer tela (inclusive falha ao baixar o arquivo dela) cai aqui, em vez da tela padrão do React Router
+    ErrorBoundary: () => (
+      <div className="px-4">
+        <RouteError />
+      </div>
+    ),
     children: [
       {
         element: <RedirectIfAuthenticated />,
@@ -36,22 +43,30 @@ export const routes = [
             element: <AppLayout />,
             children: [
               {
-                path: '/',
-                lazy: () => import('@/features/today/TodayPage').then((module) => ({ Component: module.TodayPage })),
-              },
-              {
-                path: '/habitos',
-                lazy: () => import('@/features/habits/HabitsPage').then((module) => ({ Component: module.HabitsPage })),
-              },
-              {
-                path: '/historico',
-                lazy: () =>
-                  import('@/features/history/HistoryPage').then((module) => ({ Component: module.HistoryPage })),
-              },
-              {
-                path: '/perfil',
-                lazy: () =>
-                  import('@/features/profile/ProfilePage').then((module) => ({ Component: module.ProfilePage })),
+                // Erro numa tela do app aparece no lugar dela, mantendo o cabeçalho e o menu
+                ErrorBoundary: RouteError,
+                children: [
+                  {
+                    path: '/',
+                    lazy: () =>
+                      import('@/features/today/TodayPage').then((module) => ({ Component: module.TodayPage })),
+                  },
+                  {
+                    path: '/habitos',
+                    lazy: () =>
+                      import('@/features/habits/HabitsPage').then((module) => ({ Component: module.HabitsPage })),
+                  },
+                  {
+                    path: '/historico',
+                    lazy: () =>
+                      import('@/features/history/HistoryPage').then((module) => ({ Component: module.HistoryPage })),
+                  },
+                  {
+                    path: '/perfil',
+                    lazy: () =>
+                      import('@/features/profile/ProfilePage').then((module) => ({ Component: module.ProfilePage })),
+                  },
+                ],
               },
             ],
           },
@@ -63,6 +78,7 @@ export const routes = [
     path: '*',
     element: (
       <section className="mx-auto max-w-md space-y-2 px-4 py-16 text-center">
+        <title>Página não encontrada · Up Leveling</title>
         <h1 className="text-2xl font-medium">Página não encontrada</h1>
         <Link to="/" className="text-brand underline">
           Voltar para o início

@@ -327,6 +327,20 @@
   animation: system-float 6s ease-in-out infinite;
 }
 
+/* Barra de carregamento ao trocar de tela: um trecho de luz correndo da esquerda para a direita */
+@keyframes system-loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@utility system-loading {
+  animation: system-loading 1s ease-in-out infinite;
+}
+
 /* Cantos em colchete ⌜ ⌟ na cor de destaque */
 @utility system-corners {
   background:
@@ -359,5 +373,9 @@
   }
   html {
     @apply font-sans;
+  }
+  /* Título que recebe o foco ao trocar de tela: sem o contorno de foco (ele não é clicável) */
+  h1[tabindex='-1']:focus {
+    outline: none;
   }
 }

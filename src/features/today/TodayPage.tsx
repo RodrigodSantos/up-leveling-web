@@ -27,6 +27,8 @@ export function TodayPage() {
 
   return (
     <section className="space-y-6">
+      {/* Título da aba do navegador: o React 19 leva o <title> para o <head> sozinho */}
+      <title>Missões diárias · Up Leveling</title>
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-muted-foreground text-sm">

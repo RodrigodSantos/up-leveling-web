@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { loginAs, mockApi, renderApp } from '@/test/render-app'
 
@@ -36,6 +37,30 @@ describe('rotas', () => {
     await renderApp('/login')
 
     expect(screen.getByRole('heading', { name: 'Missões diárias' })).toBeInTheDocument()
+  })
+
+  it('cada tela tem o próprio título na aba e, ao trocar de tela, o foco vai para o título dela', async () => {
+    loginAs()
+    await renderApp('/')
+    expect(document.title).toBe('Missões diárias · Up Leveling')
+
+    await userEvent.click(screen.getByRole('link', { name: 'Hábitos' }))
+
+    const heading = await screen.findByRole('heading', { level: 1, name: 'Hábitos' })
+    await waitFor(() => expect(heading).toHaveFocus())
+    expect(document.title).toBe('Hábitos · Up Leveling')
+  })
+
+  it('o primeiro Tab cai no link que pula o menu e vai direto para o conteúdo', async () => {
+    loginAs()
+    await renderApp('/')
+
+    await userEvent.tab()
+
+    const skip = screen.getByRole('link', { name: 'Pular para o conteúdo' })
+    expect(skip).toHaveFocus()
+    expect(skip).toHaveAttribute('href', '#conteudo')
+    expect(document.getElementById('conteudo')).toBe(screen.getByRole('main'))
   })
 
   it('mostra a página de não encontrada para rotas desconhecidas', async () => {
