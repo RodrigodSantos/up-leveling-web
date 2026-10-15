@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getSession } from '@/lib/auth/token-storage'
@@ -12,6 +12,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.useRealTimers()
   vi.unstubAllGlobals()
 })
 
@@ -60,6 +61,32 @@ describe('login', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('E-mail ou senha inválidos')
     expect(getSession()).toBeNull()
+  })
+
+  it('se a API demora mais de 4 s, avisa que o servidor está acordando; o aviso some quando ela responde', async () => {
+    // A resposta só chega quando o teste chamar answer(): dá para ver a tela durante a espera
+    let answer: (response: Response) => void = () => {}
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise<Response>((resolve) => (answer = resolve))),
+    )
+    await renderApp('/login')
+
+    // Relógio falso: o teste avança os 4 s na hora, sem esperar de verdade
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    await user.click(screen.getByRole('button', { name: 'Entrar com a conta demo' }))
+
+    act(() => vi.advanceTimersByTime(3_900))
+    expect(screen.queryByText(/servidor está acordando/)).not.toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(200))
+    expect(screen.getByText('O servidor está acordando, isso pode levar até 1 minuto.')).toBeInTheDocument()
+
+    const problem = { title: 'Credenciais inválidas', detail: 'E-mail ou senha inválidos' }
+    answer(
+      new Response(JSON.stringify(problem), { status: 401, headers: { 'Content-Type': 'application/problem+json' } }),
+    )
+    await waitFor(() => expect(screen.queryByText(/servidor está acordando/)).not.toBeInTheDocument())
   })
 
   it('entra com a conta demo sem digitar nada', async () => {

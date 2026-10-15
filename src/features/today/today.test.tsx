@@ -226,6 +226,27 @@ describe('Missões diárias', () => {
     expect(await screen.findByText('Meta do dia já atingida (1/1)')).toBeInTheDocument()
   })
 
+  it('erro ao carregar as missões mostra a mensagem e o "Tentar de novo" busca outra vez', async () => {
+    // A primeira rota que bate é a usada: a falha vem antes da resposta boa
+    mockApi(
+      { method: 'GET', path: '/api/today', status: 500, body: { title: 'Erro interno', detail: 'Falha no servidor' } },
+      { method: 'GET', path: '/api/me', status: 200, body: me },
+      { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
+    )
+    await renderApp('/')
+
+    expect(await screen.findByText('Não foi possível carregar suas missões. Falha no servidor')).toBeInTheDocument()
+
+    mockApi(
+      { method: 'GET', path: '/api/me', status: 200, body: me },
+      { method: 'GET', path: '/api/me/progress', status: 200, body: progress },
+      { method: 'GET', path: '/api/today', status: 200, body: today([ler]) },
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }))
+    expect(await screen.findByText('Ler 20 páginas')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('sem missões no dia, convida a criar hábitos', async () => {
     mockApi(
       { method: 'GET', path: '/api/me', status: 200, body: me },

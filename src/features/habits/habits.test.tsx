@@ -263,6 +263,21 @@ describe('Hábitos', () => {
     expect(api.mock.calls.some(([url]) => String(url).endsWith('/api/habits?status=PAUSED'))).toBe(true)
   })
 
+  it('erro ao carregar a lista mostra a mensagem e o "Tentar de novo" busca outra vez', async () => {
+    // A primeira rota que bate é a usada: a falha vem antes da lista
+    mockApi(
+      { method: 'GET', path: '/api/habits', status: 500, body: { title: 'Erro interno', detail: 'Falha no servidor' } },
+      ...baseRoutes([ler]),
+    )
+    await renderApp('/habitos')
+
+    expect(await screen.findByText('Não foi possível carregar seus hábitos. Falha no servidor')).toBeInTheDocument()
+
+    mockApi(...baseRoutes([ler]))
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }))
+    expect(await screen.findByText('Ler 20 páginas')).toBeInTheDocument()
+  })
+
   it('sem hábitos, convida a criar o primeiro', async () => {
     mockApi(...baseRoutes([]))
     await renderApp('/habitos')

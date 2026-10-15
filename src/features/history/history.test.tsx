@@ -178,6 +178,29 @@ describe('Histórico', () => {
     expect(url.searchParams.has('habitId')).toBe(false)
   })
 
+  it('erro na lista de check-ins não derruba o gráfico, e o "Tentar de novo" busca só a lista', async () => {
+    // A primeira rota que bate é a usada: a falha vem antes da lista
+    mockApi(
+      {
+        method: 'GET',
+        path: '/api/check-ins/daily',
+        status: 500,
+        body: { title: 'Erro interno', detail: 'Falha no servidor' },
+      },
+      ...routes(),
+    )
+    await renderApp('/historico')
+
+    expect(await screen.findByText('Não foi possível carregar os check-ins. Falha no servidor')).toBeInTheDocument()
+    expect(screen.getByText('XP no período')).toBeInTheDocument() // o gráfico e o resumo continuam
+
+    const api = mockApi(...routes())
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }))
+    expect(await screen.findByText('Beber água')).toBeInTheDocument()
+    expect(urlsFor(api, '/api/check-ins/daily')).toHaveLength(1)
+    expect(urlsFor(api, '/api/me/xp-history')).toHaveLength(0)
+  })
+
   it('sem check-ins, explica de onde eles vêm', async () => {
     mockApi(...routes(page([], 0, 0)))
     await renderApp('/historico')
