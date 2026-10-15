@@ -1,7 +1,8 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ProgressResponse, UserResponse } from '@/lib/api/types'
+import { accentPalette } from '@/lib/theme/color'
 import { loginAs, mockApi, renderApp, sentBody } from '@/test/render-app'
 
 const me: UserResponse = { id: 1, name: 'Rodrigo', email: 'rodrigo@mail.com', createdAt: '2026-10-08T10:00:00' }
@@ -32,7 +33,7 @@ function panel(name: string) {
 
 beforeEach(() => {
   localStorage.clear()
-  document.documentElement.removeAttribute('data-accent')
+  document.documentElement.removeAttribute('style') // tira as cores de destaque aplicadas por outro teste
   loginAs()
 })
 
@@ -178,17 +179,33 @@ describe('Perfil', () => {
     expect(within(panel('Trocar senha')).getByRole('button', { name: 'Alterar senha' })).toBeDisabled()
   })
 
-  it('trocar a cor de destaque e o modo vale na hora e fica salvo no navegador', async () => {
+  it('atalho de cor, qualquer matiz no controle e o modo valem na hora e ficam salvos no navegador', async () => {
     mockApi(...routes())
     await renderApp('/perfil')
 
     const aparencia = await screen.findByRole('region', { name: 'Aparência' })
     expect(within(aparencia).getByRole('radio', { name: 'Azul' })).toHaveAttribute('aria-checked', 'true')
 
+    // Atalho: as cores calculadas para a matiz vão para o <html>
     await userEvent.click(within(aparencia).getByRole('radio', { name: 'Roxo' }))
-    expect(document.documentElement.dataset.accent).toBe('purple')
-    expect(localStorage.getItem('up-leveling.accent')).toBe('purple')
+    const html = document.documentElement.style
+    expect(html.getPropertyValue('--accent-dark')).toBe(accentPalette(294).dark.brand)
+    expect(html.getPropertyValue('--accent-light')).toBe(accentPalette(294).light.brand)
+    expect(localStorage.getItem('up-leveling.accent')).toBe('294')
     expect(within(aparencia).getByRole('radio', { name: 'Roxo' })).toHaveAttribute('aria-checked', 'true')
+
+    // Matiz livre no controle: nenhum atalho fica marcado
+    const slider = within(aparencia).getByRole('slider', { name: 'Ou escolha qualquer cor' })
+    fireEvent.change(slider, { target: { value: '200' } })
+    expect(slider).toHaveAttribute('aria-valuetext', 'Matiz 200°')
+    expect(html.getPropertyValue('--accent-dark')).toBe(accentPalette(200).dark.brand)
+    expect(localStorage.getItem('up-leveling.accent')).toBe('200')
+    expect(JSON.parse(localStorage.getItem('up-leveling.accent-vars')!)).toMatchObject({
+      '--accent-dark': accentPalette(200).dark.brand,
+    })
+    expect(
+      within(aparencia).queryByRole('radio', { checked: true, name: /Azul|Vermelho|Amarelo|Roxo|Verde/ }),
+    ).toBeNull()
 
     await userEvent.click(within(aparencia).getByRole('radio', { name: 'Claro' }))
     expect(localStorage.getItem('up-leveling.mode')).toBe('light')

@@ -60,17 +60,18 @@
 /*
  * TEMAS: duas escolhas independentes, as duas no <html>.
  *   modo:     classe "dark" (sem ela = claro)
- *   destaque: atributo data-accent="blue | red | yellow | purple | green" (sem ele = azul)
+ *   destaque: variáveis --accent-light / --accent-dark (e o texto delas) no style do <html>, calculadas a
+ *             partir da matiz escolhida (src/lib/theme/color.ts). Sem elas = azul.
  *
  * --brand é a cor de destaque: barra de XP, nível, bordas, botão principal, foco.
- * Cada cor tem um tom para o claro (mais escuro, para contrastar com o branco) e outro para o escuro (mais vivo).
+ * Cada matiz tem um tom para o claro (mais escuro, para contrastar com o branco) e outro para o escuro (mais vivo).
  * --success (cumprido) e --streak (sequência) têm significado próprio e NÃO mudam com o destaque.
  */
 
 /* ---------- Modo claro (base) ---------- */
 :root {
-  --brand: #1565d8;
-  --brand-foreground: #ffffff;
+  --brand: var(--accent-light, #096ebf);
+  --brand-foreground: var(--accent-light-foreground, #ffffff);
   --success: #0f8a5f;
   --streak: #d97706;
 
@@ -88,7 +89,8 @@
   --muted-foreground: #5b6b8a;
   --accent: #e8eef8;
   --accent-foreground: #0b1530;
-  --destructive: #d42a3c;
+  /* Com destaque vermelho ou laranja, o erro vira magenta (para não se confundir com ele) */
+  --destructive: var(--accent-destructive-light, #d42a3c);
   --border: #d6e0f0;
   --input: #d6e0f0;
   --ring: var(--brand);
@@ -110,8 +112,8 @@
 
 /* ---------- Modo escuro: a "janela do Sistema" ---------- */
 .dark {
-  --brand: #3b9eff;
-  --brand-foreground: #05101f;
+  --brand: var(--accent-dark, #399efe);
+  --brand-foreground: var(--accent-dark-foreground, #041222);
   --success: #22c58b;
   --streak: #f59e0b;
 
@@ -127,7 +129,7 @@
   --muted-foreground: #7d8fb3;
   --accent: #16213a;
   --accent-foreground: #dce8ff;
-  --destructive: #ff5c6c;
+  --destructive: var(--accent-destructive-dark, #ff5c6c);
   --border: #1d2a44;
   --input: #23314d;
   --chart-2: #7d8fb3;
@@ -141,59 +143,27 @@
   --sidebar-border: #1d2a44;
 }
 
-/* ---------- Cores de destaque (claro / escuro) ---------- */
-/*
- * Valem no <html> (o tema do app) e também em qualquer elemento com data-accent dentro da página:
- * é assim que as amostras de cor do Perfil mostram cada cor no tom do modo atual.
- * O azul precisa de regra própria só para as amostras (no <html>, sem atributo, ele já é o padrão).
- */
-[data-accent='blue'] {
-  --brand: #1565d8;
-  --brand-foreground: #ffffff;
+/* Controle de matiz (Perfil → Aparência): bolinha branca com borda, sobre o arco-íris */
+.hue-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 3px solid var(--brand);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35);
 }
-.dark[data-accent='blue'],
-.dark [data-accent='blue'] {
-  --brand: #3b9eff;
-  --brand-foreground: #05101f;
+.hue-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 3px solid var(--brand);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35);
 }
-/* No tema vermelho, o erro vira magenta para não se confundir com o destaque */
-[data-accent='red'] {
-  --brand: #d42a3c;
-  --brand-foreground: #ffffff;
-  --destructive: #b4236b;
-}
-.dark[data-accent='red'],
-.dark [data-accent='red'] {
-  --brand: #ff5c6c;
-  --brand-foreground: #1f0508;
-  --destructive: #ff6fa8;
-}
-[data-accent='yellow'] {
-  --brand: #9a6700;
-  --brand-foreground: #ffffff;
-}
-.dark[data-accent='yellow'],
-.dark [data-accent='yellow'] {
-  --brand: #ffc53d;
-  --brand-foreground: #1f1600;
-}
-[data-accent='purple'] {
-  --brand: #6d3fe0;
-  --brand-foreground: #ffffff;
-}
-.dark[data-accent='purple'],
-.dark [data-accent='purple'] {
-  --brand: #a78bfa;
-  --brand-foreground: #120a2b;
-}
-[data-accent='green'] {
-  --brand: #0f8a5f;
-  --brand-foreground: #ffffff;
-}
-.dark[data-accent='green'],
-.dark [data-accent='green'] {
-  --brand: #34d399;
-  --brand-foreground: #03211a;
+.hue-slider:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
 }
 
 /* Painel no estilo "janela do Sistema": borda na cor de destaque com um brilho suave */

@@ -19,7 +19,7 @@ Frontend do **Up Leveling**: hábitos gamificados, no estilo da "janela do Siste
 - **Missões diárias:** check-in com meta por dia (ex.: 3/8 copos de água), sequência 🔥, desfazer, "ver ontem" e a janela **"Você subiu de nível"** quando o XP passa do nível
 - **Hábitos:** criar, editar, pausar/reativar e excluir (com confirmação), com filtro e dias da semana
 - **Histórico:** gráfico de XP por dia (7, 30 ou 90 dias) e lista de check-ins agrupada por dia, com filtro por hábito e paginação
-- **Perfil:** nível, dados da conta, troca de senha e aparência (modo claro/escuro e 5 cores de destaque)
+- **Perfil:** nível, dados da conta, troca de senha e aparência (modo claro/escuro e **qualquer cor de destaque**, escolhida num arco-íris, com 5 atalhos)
 - **Entrada:** login, cadastro e conta demo, com a tela animada da "janela do Sistema"
 - **Celular:** menu fixo no rodapé e cabeçalho de uma linha
 
@@ -30,11 +30,12 @@ Frontend do **Up Leveling**: hábitos gamificados, no estilo da "janela do Siste
 - **Erros da API nos campos.** O backend responde no formato RFC 9457 (Problem Details); o cliente transforma em `ApiError`, e o formulário mostra cada erro no campo certo (ex.: e-mail já cadastrado).
 - **Cada tela é carregada sob demanda** (`lazy` nas rotas). O arquivo principal caiu de 697 kB para 380 kB, e o Recharts (o mais pesado) só vem com o Histórico. Se um deploy novo sair com o app aberto, a tela de erro oferece recarregar.
 - **Acessibilidade:** título da aba por tela, foco no título ao trocar de tela, link "Pular para o conteúdo", botões com nome completo para leitor de tela ("Fazer check-in: Ler"), áreas de toque de 44 px no celular e animações desligadas para quem pede "reduzir movimento".
+- **Cor de destaque calculada em OKLCH.** A pessoa escolhe só a matiz (0–359°); o tom de cada modo sai de uma interpolação entre as 5 cores originais, com a saturação reduzida até caber na tela e a luminosidade ajustada até o contraste passar de 4,5:1 (WCAG). Um teste confere as 360 matizes nos dois modos.
 - **Animações só com CSS e React**, sem biblioteca (a tela de entrada e a janela de nível somam cerca de 6 kB).
 
 ## 🧪 Testes
 
-**73 testes** com Vitest e Testing Library, rodando no CI a cada push (junto com lint, formatação, tipos e build):
+**81 testes** com Vitest e Testing Library, rodando no CI a cada push (junto com lint, formatação, tipos e build):
 
 - **Fluxo principal:** cria a conta → cria um hábito → faz o check-in → vê o XP no cabeçalho e no histórico, contra uma API falsa que guarda estado entre as telas
 - **Cada tela:** caminho feliz, validações no navegador, erros da API (401, 409, 422, 500) e "Tentar de novo"
@@ -96,7 +97,7 @@ src
 ├── lib/
 │   ├── api/        # cliente HTTP: token, JSON e erros da API (RFC 9457)
 │   ├── auth/       # sessão, AuthProvider (useAuth) e porteiros das rotas
-│   └── theme/      # cor de destaque
+│   └── theme/      # cor de destaque: cálculo em OKLCH com contraste garantido
 └── test/           # configuração dos testes e API simulada
 ```
 

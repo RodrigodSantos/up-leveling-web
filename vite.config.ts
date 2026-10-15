@@ -14,5 +14,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // Limite de cada teste (o padrão é 5 s). O renderApp espera até 10 s pela tela carregada sob demanda
+    // (no primeiro teste de cada arquivo ela ainda passa pela transformação do Vitest): o limite precisa ser maior
+    testTimeout: 15_000,
   },
 })

@@ -9,11 +9,13 @@
     <script>
       // Aplica o tema salvo ANTES de desenhar a página (sem isto, ela piscaria no tema padrão ao abrir).
       // Padrão: modo escuro e destaque azul. Mesmas chaves do next-themes e de src/lib/theme/accent.ts.
+      // As cores do destaque já ficam salvas prontas: aqui só são aplicadas, sem refazer o cálculo.
       try {
         var mode = localStorage.getItem('up-leveling.mode') || 'dark'
         var dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
         document.documentElement.classList.toggle('dark', dark)
-        document.documentElement.dataset.accent = localStorage.getItem('up-leveling.accent') || 'blue'
+        var vars = JSON.parse(localStorage.getItem('up-leveling.accent-vars') || '{}')
+        for (var name in vars) document.documentElement.style.setProperty(name, vars[name])
       } catch (e) {}
     </script>
   </head>
